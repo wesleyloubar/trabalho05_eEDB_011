@@ -1,12 +1,24 @@
 # trabalho05_eEDB_011
 
-Trabalho 03 ministrado pelo professor Leandro Mendes Ferreira no segundo semestre de 2022 - Ingestão de Dados.
+Tarefa 5 - Aula 6
+Implementar  a atividades da tarefa 3  ou da tarefa 5 (escolher uma das duas tarefas) com as seguintes diferenças:
 
-O trabalho consiste em realizar ETL:
-1) ingerir dados de um CSV e uma API utilizando python
-2) criar uma tabela fato utilizando esquema estrela 
-3) orquestrar com o auxílio da ferramenta `AirFlow`
-4) transformar os dados utilizando `DBT` (_data build tool_)
+O processamento realizado deve ser aplicado em um serviço Serverless***
+
+A fonte de dados dever ser as seguintes:
+
+1 -  Ranking de Instituições por Índice de Reclamações (Arquivos CSV)
+
+2 - Tarifas Bancárias - por Segmento e por Instituição (Dados em uma base de dados Relacional)
+
+Camadas de Dados no AWS S3:
+
+RAW (Dados Crus)
+Trusted (Dados Tratados mas sem implementação de modelagem)
+Analytics (Modelado em Star Schema - Replicados em base de dados relacional)
+Camadas Trusted e Analytics devem ser mapeadas no AWS Glue Catalog
+
+Implementar Airflow e DBT é opcional
 
 ## 🚀 Começando
 
