@@ -173,8 +173,6 @@ Passos do fluxo utilizado no `Airflow`:
 * [Python](https://www.python.org/) - Linhas de código utilizado para programação;
 * [PySpark](https://spark.apache.org/docs/latest/api/python/) - Utilizado para ETL dos dados;
 * [MySQL](https://www.mysql.com/) - Utilizado para ETL dos dados;
-* [DBT](https://airflow.apache.org/docs/apache-airflow-providers-dbt-cloud/stable/operators.html) - Utilizado para construção dos dados;
-* [Airflow](https://airflow.apache.org/) - Utilizado para realizar a orquestração e monitoria de workflows;
 
 
 ## ✒️ Autores
