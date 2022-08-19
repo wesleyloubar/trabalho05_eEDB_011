@@ -181,5 +181,4 @@ Passos do fluxo utilizado no `Airflow`:
 * [Rodrigo Vitorino](https://github.com/digaumlv)
 * [Thais Nabe](https://github.com/thaisnabe)
 * [Vitor Marques](https://github.com/vitormrqs)
-* [Wellington Cassio Faria](https://github.com/wellicfaria)
 * [Wesley Lourenço Barbosa](https://github.com/wesleyloubar)
