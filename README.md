@@ -52,10 +52,10 @@ No Glue, poderíamos adotar uma estratégia de subir um script Python em noteboo
 <img src="./images/4 - lambda.png" width="75%">
  
 * 5 - Base MySQL adquirido do provedor UOL. Reaproveitamos da atividade anterior
- <img src="./images/2_bancodados.png" width="55%">
+
 
 * 6 - Grafana para visualização dos dados
- <img src="./images/6_grafana.jpg" width="75%">
+ <img src="./images/8-GrafanaGraficos.jpg" width="75%">
  
 * 7 - MySQL Workbench para verificação do processo de inserção de dados na base uol.
  <br>
