@@ -22,161 +22,67 @@ Implementar Airflow e DBT é opcional
 
 ## 🚀 Começando
 
-Defininos as seguintes camandas: 
+Trabalho 05 ministrado pelo professor Leandro Mendes Ferreira no segundo semestre de 2022 - Ingestão de Dados.
 
-- `Raw`: Pasta de Códigos para dados brutos
-- `Trusted`: Pasta de Códigos para Dados tratados
-- `Refined`: Pasta de Códigos para Dados Dados tratados e modelados
-- `Data`: Pasta para armazenar dados
-- `Source`: Dados para extração
-- `Sink`: Para de escrita dos códigos
-- `Stage`: Pasta temporaria para processamento raw
+Defininos as seguintes camadas: 
 
-Consulte **Implantação** para saber como implantar o projeto.
-
-## 📋 Requerimentos
-
-Requisitos do trabalho:
-
-```
-Leitura das Fontes:
-    - Leitura de um csv
-        - Escreve na RAW 
-    - Leitura de uma API
-        - Escreve na RAW
-Limpar os dados:
-    - Lê os dados das RAW, escreve na  pasta TRUSTED fazendo a LIMPEZA DOS DADOS.
-Consumo:
-    - Do TRUSTED, se insere no banco de dados realizando modelagem(star schema). Sendo categoriazado como refined, modelo STAR SCHEMA em SQL no banco nomeado como DW, 
-Camanda de Visualização: 
-    - 3 gráficos desenhados no grafana.  
-```
+- `Raw`: Pasta para dados brutos
+- `Raw_scripts`: Pasta de Códigos para dados brutos
+- `Trusted`: Pasta para Dados tratados
+- `Trusted_scripts`: Pasta de Códigos para Dados tratados
+- `Refined`: Pasta para Dados Dados tratados e modelados
+- `Refined_scripts`: Pasta de Códigos para Dados Dados tratados e modelados
+- `source`: Dados para extração
+- `drivers`: jar para execução de inserção Spark 
 
 
+## 📋 Implementação
+<img src="./images/arquitetura.jpg" width="75%">
 
-## 🔧 Instalação
+* 1 - Nossa estratégia foi recriar a estrutura de camadas exigidas para as atividades anteriores dentro do S3. Entendemos que o mais adequado seria criar um bucket para cada camada, mas como os código já haviam sido modificados para um único bucket, mantivemos essa estrutura. 
 
-Primeiro de tudo, você deve:
+* 2 - Como dessa vez não poderíamos utilizar um cluster gerenciável, nossa primeira estratégia foi utilizar o AWS Glue para a execução dos scripts.
+No Glue, poderíamos adotar uma estratégia de subir um script Python em notebook e executá-lo, ou submeter um script Spark. Criamos um Job para cada estratégia.
+<img src="./images/2-glue.jpg" width="75%">
 
-* Instalar o [VS Code](https://code.visualstudio.com/)
-* Abra o projeto no VS Code
-* Seguir esse tutorial para configurar Docker no VS code: [Developing inside a Container](https://code.visualstudio.com/docs/remote/containers) 
-* Apertar 'ctrl + P', dentro da caixa aberta digite '> open Folder in container'
+* 3 - Cada job criou os resultados no S3 e na base do Mysql.
+<img src="./images/3_jobs_glue.png" width="75%">
 
-1) Pegar o IP do banco de dados Mysql: 
-```
-docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' db_mysql
-```
+* 4 - Também tentamos viabilizar a execução do Spark no Lambda. Porém, em virtude das limitações do Lambda (tamanho máximo de arquivo para submeter), não conseguimos rodar a função necessária. Nossa estratégia inicial de utilizar Pyspak se provou um dificultador para a realização das demais tarefas em comparação à um código implementado com Python puro.
+<img src="./images/4 - lambda.png" width="75%">
+ 
+* 5 - Base MySQL adquirido do provedor UOL. Reaproveitamos da atividade anterior
+ <img src="./images/2_bancodados.png" width="55%">
 
-Alterar o arquivo refined/util/dbmysql.py com ip do banco, se necessário. 
-
-
-2) Instalando as Dependências do projeto:
-```
-pip install -r /workspaces/trabalho03_eEDB_011/requirements.txt
-```
-
-3) Instalar e rodar o AirFlow:
-Executar os comandos:
-```
-pip install "apache-airflow[celery]==2.3.3" --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.3.3/constraints-3.7.txt"
-airflow standalone
-```
-
-A fim de alterar o local das pastas DAGs e LOGs, cria-se as pastas em sua raíz:
-
-```
-cd /workspaces/trabalho03_eEDB_011
-mkdir dags
-mkdir logs
-```
-
-Logo em seguida, altera-se o caminho da pasta DAGs e LOGs no arquivo `airflow.cfg` utilizando o seu editor de preferência (aqui está sendo utilizado o Visual Studio Code):
-```
-code /home/vscode/airflow/airflow.cfg
-```
-
-Alterar a linha
-
-```
-dags_folder = /home/vscode/airflow/dags
-```
-
-para:
-
-```
-dags_folder = /workspaces/trabalho03_eEDB_011/dags
-```
-
-Alterar também:
-```
-base_log_folder = /home/vscode/airflow/logs
-base_log_folder = /workspaces/trabalho03_eEDB_011/logs
-```
-
-Abrir um terminal e criar um usuário, segue um exemplo de um integrante do grupo:
-
-```
-airflow users create \
-    --username airflow \
-    --firstname Wellington \
-    --lastname Faria \
-    --role Admin \
-    --password airflow \
-    --email wellicfaria@gmail.com
-```
-
-## Acessar o `Airflow`:
-* Link: http://localhost:8080/home
-* Usuário: airflow
-* Senha: airflow
+* 6 - Grafana para visualização dos dados
+ <img src="./images/6_grafana.jpg" width="75%">
+ 
+* 7 - MySQL Workbench para verificação do processo de inserção de dados na base uol.
+ <br>
+ * 8 - AWS Glue para documentação do catálogo de dados.
+ Para gerar a documentação do catálogo de dados seguimos o seguinte processo:
+ <br> Criar duas bases de dados, uma para cada repositório do S3 que queríamos documentar (trusted e refined)
+ <br> Configurar dois crawlers para mapear a estruturas dos dados de cada repositório.
+ <br> Iniciar os crawlers que geraram as respectivas tabelas de metadados de cada repositório
 
 
-## 🔩 Acesso ao banco de dados
 
-Para acessar o banco de dados e fazer o SQL, utilize a senha = `123456`
+<hr>
 
-```
-docker exec -it  db_mysql bash
-
-mysql -uroot -p
-```
-
-## 🔩 Acesso ao DBT Docs
-
-Para gerar a documentação, rode:
-```
-dbt docs generate --project-dir /workspaces/trabalho03_eEDB_011/dw_dbt --profiles-dir /workspaces/trabalho03_eEDB_011
-```
-
-Para acessá-la, rode:
-```
-dbt docs serve --port 1212 --project-dir /workspaces/trabalho03_eEDB_011/dw_dbt --profiles-dir /workspaces/trabalho03_eEDB_011
-```
-
-<img src="./images/DBT.png" width="75%">
-
-### Resultados
-
-Passos do fluxo utilizado no `Airflow`:
-
-1. Carga dos arquivos _raw_: `file_csv_war`, `api_raw`
-2. Carga dos arquivos _trusted_: `file_csv_trusted`, `api_trusted`
-3. Geração das tabelas na camada _refined_ utilizando DBT: `DM_CATEGORIA`, `DM_INSTITUICAO`, `DM_TIPO`, `DM_INDICE`
-4. Análise de chaves únicas e valores nulos utilizando os testes presentes no DBT: `DM_CATEGORIA_TEST`, `DM_INSTITUICAO_TEST`, `DM_TIPO_TEST`, `DM_INDICE_TEST`
-4. Desenvolvimento da tabela Fato: `FT_INDICE_RECLAMACAO`
-
-<img src="./images/Airflow.png" width="75%">
+## Resultados
+Acreditamos que atendemos todos os requisitos obrigatórios propostos para a tarefa. 
+<br> Tivemos problemas para criar uma aplicação serveless para rodar Spark no Lambda, mas a execução no Glue ocorreu como esperado.
 
 ## 🛠️ Construído com
-* [Docker](https://www.docker.com/) - Utilizado para repositório
 * [Python](https://www.python.org/) - Linhas de código utilizado para programação;
 * [PySpark](https://spark.apache.org/docs/latest/api/python/) - Utilizado para ETL dos dados;
 * [MySQL](https://www.mysql.com/) - Utilizado para ETL dos dados;
-
+* [AWS S3](https://aws.amazon.com/pt/s3/) - Utilizado como repositório de dados;
+* [AWS Glue](https://https://aws.amazon.com/pt/glue/?whats-new-cards.sort-by=item.additionalFields.postDateTime&whats-new-cards.sort-order=desc/) - Utilizado para mapeamento do catálogo de dados;
 
 ## ✒️ Autores
 * [Rodrigo Vitorino](https://github.com/digaumlv)
 * [Thais Nabe](https://github.com/thaisnabe)
 * [Vitor Marques](https://github.com/vitormrqs)
 * [Wesley Lourenço Barbosa](https://github.com/wesleyloubar)
+
